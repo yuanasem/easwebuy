@@ -22,14 +22,19 @@ const ecgChart = new Chart(ctxMain, {
 });
 
 // --- 2. LOGIKA MQTT ---
-const broker = "broker.hivemq.com"; 
-const port = 8000; 
+// Gunakan domain aplikasi Railway Anda, BUKAN HiveMQ
+const broker = "easweb.up.railway.app"; 
+// Gunakan port 443 karena Railway menggunakan HTTPS (SSL)
+const port = 443; 
 const clientID = "client_" + Math.random().toString(16).substr(2, 8);
-const client = new Paho.MQTT.Client(broker, port, clientID);
+
+// Tambahkan "/" sebagai path standar Mosquitto
+const client = new Paho.MQTT.Client(broker, port, "/", clientID);
 
 client.onConnectionLost = (onLost) => {
     document.getElementById('conn-status').innerText = "Disconnected";
     document.getElementById('conn-status').style.background = "#ffcccc";
+    console.log("Koneksi terputus: ", onLost.errorMessage);
 };
 
 client.onMessageArrived = (msg) => {
@@ -50,50 +55,19 @@ function updateData(index, value) {
     if(ecgChart.data.datasets[index].data.length > 100) {
         ecgChart.data.datasets[index].data.shift();
     }
-    ecgChart.update('none'); // Update tanpa animasi agar ringan
+    ecgChart.update('none'); 
 }
 
+// Lakukan koneksi dengan mengaktifkan SSL
 client.connect({ 
     onSuccess: () => {
         document.getElementById('conn-status').innerText = "Connected";
         document.getElementById('conn-status').style.background = "#d1f2eb";
+        // Subscribe ke topik yang sama dengan yang dikirim ESP32
         client.subscribe("esp32/lead1");
         client.subscribe("esp32/lead2");
         client.subscribe("esp32/lead3");
+        console.log("Berhasil terhubung ke Broker Railway!");
     },
-    useSSL: false
+    useSSL: true // WAJIB TRUE karena memakai domain HTTPS Railway
 });
-
-// --- 3. FUNGSI TOMBOL ---
-document.getElementById('recordBtn').onclick = function() {
-    isRecording = !isRecording;
-    this.innerText = isRecording ? "⏹ Stop & Simpan" : "🔴 Mulai Rekam";
-    this.style.background = isRecording ? "#2c3e50" : "#e74c3c";
-    
-    const log = document.getElementById('recordLog');
-    if(isRecording) {
-        recordedData = [];
-        log.innerHTML += `<p>> Perekaman dimulai pada ${new Date().toLocaleTimeString()}</p>`;
-    } else {
-        log.innerHTML += `<p>> Perekaman selesai. Total data: ${recordedData.length}</p>`;
-    }
-};
-
-document.getElementById('exportBtn').onclick = function() {
-    if(recordedData.length === 0) return alert("Belum ada data terekam!");
-    
-    let csv = "Timestamp,Lead,Value\n";
-    recordedData.forEach(row => {
-        csv += `${row.t},${row.tp},${row.v}\n`;
-    });
-
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.setAttribute('hidden', '');
-    a.setAttribute('href', url);
-    a.setAttribute('download', `ECG_Data_${Date.now()}.csv`);
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-};
