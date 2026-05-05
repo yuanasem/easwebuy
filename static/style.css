@@ -1,0 +1,91 @@
+:root {
+    --primary: #e74c3c;
+    --secondary: #2ecc71;
+    --dark: #2c3e50;
+    --bg: #f0f2f5;
+    --card: #ffffff;
+    --grid-color: #ffdee0;
+}
+
+body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    margin: 0;
+    padding: 20px;
+    color: var(--dark);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 15px 25px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    background: #eee;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.card {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.full-width { grid-column: span 2; }
+
+.chart-wrapper {
+    position: relative;
+    height: 300px;
+    margin-top: 15px;
+}
+
+/* Background Kertas ECG */
+.ecg-grid {
+    background-color: #fff;
+    background-image: 
+        linear-gradient(var(--grid-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-color) 1px, transparent 1px),
+        linear-gradient(rgba(255,0,0,0.3) 2px, transparent 2px),
+        linear-gradient(90deg, rgba(255,0,0,0.3) 2px, transparent 2px);
+    background-size: 10px 10px, 10px 10px, 50px 50px, 50px 50px;
+    border: 2px solid var(--grid-color);
+}
+
+.controls button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.btn-record { background: var(--primary); color: white; }
+.btn-record:hover { background: #c0392b; }
+
+.btn-export { background: var(--secondary); color: white; margin-left: 10px; }
+
+.log-container {
+    height: 150px;
+    overflow-y: auto;
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 0.85rem;
+}
