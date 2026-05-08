@@ -29,7 +29,7 @@ const port = 443;
 const clientID = "client_" + Math.random().toString(16).substr(2, 8);
 
 // Tambahkan "/" sebagai path standar Mosquitto
-const client = new Paho.MQTT.Client(broker, port, clientID);
+const client = new Paho.MQTT.Client(broker, port, "/", clientID);
 
 client.onConnectionLost = (onLost) => {
     document.getElementById('conn-status').innerText = "Disconnected";
