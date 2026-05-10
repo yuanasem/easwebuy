@@ -52,7 +52,7 @@ const broker = "easweb.up.railway.app";
 const port = 443; 
 const clientID = "web_monitor_" + Math.random().toString(16).substr(2, 5);
 
-const client = new Paho.MQTT.Client(broker, port, clientID);
+const client = new Paho.MQTT.Client(broker, Number(port), "/mqtt", clientID);
 
 // Variabel penampung nilai terakhir untuk kalkulasi augmented leads
 let lastLeads = { L1: 0, L2: 0, L3: 0 };
