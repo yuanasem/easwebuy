@@ -1,3 +1,14 @@
+// Proteksi Halaman
+if (!localStorage.getItem('token')) {
+    window.location.href = "landing.html";
+}
+
+// Tambahkan tombol Logout di index.html jika perlu
+function logout() {
+    localStorage.removeItem('token');
+    window.location.href = "landing.html";
+}
+
 // --- 1. INISIALISASI VARIABEL & CHART ---
 const ctxMain = document.getElementById('ecgChartMain').getContext('2d');
 const ctxAug = document.getElementById('ecgChartAug').getContext('2d');
