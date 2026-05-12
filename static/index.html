@@ -2,52 +2,67 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ECG Real-time Dashboard</title>
+    <title>Login - ECG System</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/paho-mqtt.min.js"></script>
+    <style>
+        .auth-container { max-width: 400px; margin: 100px auto; padding: 30px; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .auth-container h2 { text-align: center; color: var(--primary); }
+        .form-group { margin-bottom: 15px; }
+        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        .toggle-link { text-align: center; cursor: pointer; color: #3498db; margin-top: 15px; }
+    </style>
 </head>
 <body>
-
-<div class="header">
-    <div class="title-section">
-        <h2>ECG Monitoring System</h2>
-        <span id="conn-status" class="status-badge">Connecting...</span>
-    </div>
-    <div class="controls">
-        <button class="btn-record" id="recordBtn">Mulai Rekam</button>
-        <button class="btn-export" id="exportBtn">Download Excel (CSV)</button>
-    </div>
-</div>
-
-<div class="grid-container">
-    <div class="card full-width">
-        <div class="card-header">
-            <h3>Live Leads (I, II, III)</h3>
-            <span class="info">Data Real-time dari 3 ESP32</span>
+    <div class="auth-container">
+        <h2 id="auth-title">Login ECG Monitoring</h2>
+        <div id="signup-fields" style="display:none;">
+            <div class="form-group"><input type="text" id="username" placeholder="Username"></div>
         </div>
-        <div class="chart-wrapper ecg-grid">
-            <canvas id="ecgChartMain"></canvas>
-        </div>
+        <div class="form-group"><input type="email" id="email" placeholder="Email"></div>
+        <div class="form-group"><input type="password" id="password" placeholder="Password"></div>
+        
+        <button class="btn-record" style="width:100%" id="auth-btn">Masuk</button>
+        <p class="toggle-link" onclick="toggleAuth()">Belum punya akun? Sign Up</p>
     </div>
 
-    <div class="card">
-        <h3>Augmented Leads</h3>
-        <p class="info">Kalkulasi: aVR, aVL, aVF</p>
-        <div class="chart-wrapper">
-            <canvas id="ecgChartAug"></canvas>
-        </div>
-    </div>
+    <script>
+        let isLogin = true;
+        const apiBase = "URL_BACKEND_RAILWAY_ANDA/api"; // Nanti ganti dengan domain Railway
 
-    <div class="card">
-        <h3>Log Aktivitas</h3>
-        <div id="recordLog" class="log-container">
-            <p>Menunggu koneksi sensor...</p>
-        </div>
-    </div>
-</div>
+        function toggleAuth() {
+            isLogin = !isLogin;
+            document.getElementById('auth-title').innerText = isLogin ? "Login ECG" : "Sign Up ECG";
+            document.getElementById('signup-fields').style.display = isLogin ? "none" : "block";
+            document.getElementById('auth-btn').innerText = isLogin ? "Masuk" : "Daftar Akun";
+        }
 
-<script src="script.js"></script>
+        document.getElementById('auth-btn').onclick = async () => {
+            const data = {
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                username: document.getElementById('username').value
+            };
+
+            const endpoint = isLogin ? "/login" : "/signup";
+            const res = await fetch(apiBase + endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await res.json();
+            if (res.ok) {
+                if (isLogin) {
+                    localStorage.setItem('token', result.token);
+                    window.location.href = "index.html"; // Masuk ke dashboard
+                } else {
+                    alert("Berhasil daftar! Silakan login.");
+                    toggleAuth();
+                }
+            } else {
+                alert(result.error);
+            }
+        };
+    </script>
 </body>
 </html>

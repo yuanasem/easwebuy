@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECG Real-time Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/paho-mqtt.min.js"></script>
+</head>
+<body>
+
+<div class="header">
+    <div class="title-section">
+        <h2>ECG Monitoring System</h2>
+        <span id="conn-status" class="status-badge">Connecting...</span>
+    </div>
+    <div class="controls">
+        <button class="btn-record" id="recordBtn">Mulai Rekam</button>
+        <button class="btn-export" id="exportBtn">Download Excel (CSV)</button>
+    </div>
+</div>
+
+<div class="grid-container">
+    <div class="card full-width">
+        <div class="card-header">
+            <h3>Live Leads (I, II, III)</h3>
+            <span class="info">Data Real-time dari 3 ESP32</span>
+        </div>
+        <div class="chart-wrapper ecg-grid">
+            <canvas id="ecgChartMain"></canvas>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Augmented Leads</h3>
+        <p class="info">Kalkulasi: aVR, aVL, aVF</p>
+        <div class="chart-wrapper">
+            <canvas id="ecgChartAug"></canvas>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Log Aktivitas</h3>
+        <div id="recordLog" class="log-container">
+            <p>Menunggu koneksi sensor...</p>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
